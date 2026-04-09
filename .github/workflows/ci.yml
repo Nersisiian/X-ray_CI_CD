@@ -1,4 +1,4 @@
-name: CI/CD
+﻿name: CI/CD
 
 on:
   push:
@@ -23,10 +23,10 @@ jobs:
           pip install flake8 black pytest pytest-asyncio httpx
           pip install -r requirements.txt
 
-      - name: Lint
+      - name: Lint with flake8
         run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
-      - name: Format check
+      - name: Format check with black
         run: black --check --verbose .
 
       - name: Download dataset sample
@@ -47,18 +47,17 @@ jobs:
       - name: Run container and test API endpoint
         run: |
           docker run -d --name xray-test -p 8000:8000 -v $(pwd)/models:/app/models xray-cicd:latest python -m app.main
-          sleep 10
-          curl --fail http://localhost:8000/health || exit 1
+          echo "Waiting for container to start..."
+          for i in {1..30}; do
+            if curl -s --fail http://localhost:8000/health > /dev/null; then
+              echo "Container is ready"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "Container failed to start. Logs:"
+              docker logs xray-test
+              exit 1
+            fi
+            sleep 2
+          done
           docker stop xray-test
-
-      # (Опционально) Push to GitHub Container Registry
-      # - name: Log in to GHCR
-      #   uses: docker/login-action@v2
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ github.repository_owner }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Push image
-      #   run: |
-      #     docker tag xray-cicd:latest ghcr.io/${{ github.repository }}:latest
-      #     docker push ghcr.io/${{ github.repository }}:latest
