@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_PATH=/app/models/xray_model.h5
+      - API_PORT=8000
+      - LOG_LEVEL=info
+    volumes:
+      - ./models:/app/models   # чтобы модель была доступна из контейнера
+    command: python -m app.main
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # redis:   # раскомментировать, если нужно кеширование
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"

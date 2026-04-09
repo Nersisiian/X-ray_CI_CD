@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>X‑ray Pneumonia Detector</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🩻 Рентген‑диагностика пневмонии</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="imageInput" accept="image/*" required>
+            <button type="submit">Анализировать</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+    <script>
+        const form = document.getElementById('uploadForm');
+        const resultDiv = document.getElementById('result');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const file = document.getElementById('imageInput').files[0];
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('file', file);
+            resultDiv.innerHTML = '<div class="loading">Загрузка и анализ...</div>';
+            try {
+                const response = await fetch('/predict', { method: 'POST', body: formData });
+                const data = await response.json();
+                if (response.ok) {
+                    const confidencePercent = (data.confidence * 100).toFixed(1);
+                    const color = data.prediction === 'PNEUMONIA' ? 'red' : 'green';
+                    resultDiv.innerHTML = `
+                        <h2 style="color:${color}">Результат: ${data.prediction}</h2>
+                        <p>Уверенность: ${confidencePercent}%</p>
+                        <p>Файл: ${data.filename}</p>
+                        <pre>${JSON.stringify(data.probabilities, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">Ошибка: ${data.detail}</div>`;
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="error">Сетевая ошибка: ${err.message}</div>`;
+            }
+        });
+    </script>
+</body>
+</html>
