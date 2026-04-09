@@ -24,7 +24,6 @@ def create_augmentation():
 
 
 def get_model(num_classes=2):
-    # Используем input_shape в EfficientNet, а не отдельный Input
     base = tf.keras.applications.EfficientNetB0(
         include_top=False, weights="imagenet", input_shape=(IMG_SIZE, IMG_SIZE, 3)
     )
