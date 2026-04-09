@@ -11,7 +11,7 @@ from fastapi.templating import Jinja2Templates
 from PIL import Image
 import uvicorn
 
-from config import MODEL_PATH, LOG_LEVEL, BASE_DIR, API_PORT   # <-- импорт API_PORT
+from config import MODEL_PATH, LOG_LEVEL, BASE_DIR, API_PORT  # <-- импорт API_PORT
 
 # Настройка логирования
 logging.basicConfig(
