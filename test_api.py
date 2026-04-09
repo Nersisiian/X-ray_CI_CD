@@ -35,4 +35,4 @@ def test_predict_with_image(tmp_path):
         )
     assert response.status_code == 200
     data = response.json()
-    assert "prediction" in data 
+    assert "prediction" in data
