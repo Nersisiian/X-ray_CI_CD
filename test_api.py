@@ -20,7 +20,7 @@ if not MODEL_PATH.exists():
     print("Creating dummy model for testing...")
     os.makedirs("models", exist_ok=True)
     model = create_dummy_model()
-    model.save(MODEL_PATH)
+    model.save(MODEL_PATH, save_format="h5")
     print(f"Dummy model saved to {MODEL_PATH}")
 
 from app.main import app
