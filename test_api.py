@@ -28,4 +28,4 @@ def test_predict_with_image(tmp_path):
         response = client.post("/predict", files={"file": ("test.jpg", f, "image/jpeg")})
     assert response.status_code == 200
     data = response.json()
-    assert "prediction" in data
+    assert "prediction" in data 
