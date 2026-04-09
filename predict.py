@@ -4,11 +4,15 @@ import numpy as np
 import tensorflow as tf
 from utils import load_and_preprocess, IMG_SIZE
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--image", required=True, help="Path to X-ray image")
-    parser.add_argument("--model", default="models/xray_model.h5", help="Path to trained model")
+    parser.add_argument(
+        "--model", default="models/xray_model.h5", help="Path to trained model"
+    )
     return parser.parse_args()
+
 
 def predict(image_path, model_path):
     if not os.path.exists(model_path):
@@ -22,6 +26,7 @@ def predict(image_path, model_path):
     confidence = pred[class_idx]
     print(f"Prediction: {classes[class_idx]} (confidence: {confidence:.3f})")
     return classes[class_idx], confidence
+
 
 if __name__ == "__main__":
     args = parse_args()

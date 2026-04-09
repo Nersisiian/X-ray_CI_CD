@@ -2,6 +2,7 @@ import os
 import shutil
 import kagglehub
 
+
 def download_sample():
     print("Downloading Chest X-Ray dataset sample...")
     # Скачиваем полный датасет (около 1GB, но CI возьмёт только пару файлов)
@@ -20,6 +21,7 @@ def download_sample():
             shutil.copy(os.path.join(src_pneu, f), "data/raw/")
 
     print("Sample images saved to data/raw/")
+
 
 if __name__ == "__main__":
     download_sample()

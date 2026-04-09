@@ -6,19 +6,27 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from utils import load_and_preprocess, create_augmentation, get_model
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--epochs", type=int, default=5)
     parser.add_argument("--batch_size", type=int, default=8)
-    parser.add_argument("--sample_fraction", type=float, default=1.0,
-                        help="Fraction of dataset to use (for quick CI test)")
+    parser.add_argument(
+        "--sample_fraction",
+        type=float,
+        default=1.0,
+        help="Fraction of dataset to use (for quick CI test)",
+    )
     return parser.parse_args()
+
 
 def load_data(data_dir="data/raw", fraction=1.0):
     images = []
     labels = []
     # предполагаем, что файлы: нормальные - NORMAL*, пневмония - PNEUMONIA*
-    for path in glob.glob(os.path.join(data_dir, "*.jpeg")) + glob.glob(os.path.join(data_dir, "*.jpg")):
+    for path in glob.glob(os.path.join(data_dir, "*.jpeg")) + glob.glob(
+        os.path.join(data_dir, "*.jpg")
+    ):
         if "NORMAL" in path or "normal" in path:
             label = 0
         elif "PNEUMONIA" in path or "pneumonia" in path:
@@ -37,6 +45,7 @@ def load_data(data_dir="data/raw", fraction=1.0):
         images, labels = images[idx], labels[idx]
     return images, labels
 
+
 def main():
     args = parse_args()
     print("Loading data...")
@@ -45,11 +54,17 @@ def main():
         print("No images found. Run python data/download_data.py first.")
         return
 
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_val, y_train, y_val = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
 
     aug = create_augmentation()
     train_ds = tf.data.Dataset.from_tensor_slices((X_train, y_train))
-    train_ds = train_ds.map(lambda x, y: (aug(x, training=True), y)).batch(args.batch_size).prefetch(tf.data.AUTOTUNE)
+    train_ds = (
+        train_ds.map(lambda x, y: (aug(x, training=True), y))
+        .batch(args.batch_size)
+        .prefetch(tf.data.AUTOTUNE)
+    )
     val_ds = tf.data.Dataset.from_tensor_slices((X_val, y_val)).batch(args.batch_size)
 
     model = get_model(num_classes=2)
@@ -61,6 +76,7 @@ def main():
     os.makedirs("models", exist_ok=True)
     model.save("models/xray_model.h5")
     print("Model saved to models/xray_model.h5")
+
 
 if __name__ == "__main__":
     main()
