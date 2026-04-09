@@ -1,26 +1,20 @@
 ﻿import os
-import shutil
-import kagglehub
+import numpy as np
+from PIL import Image
 
 
-def download_sample():
-    print("Downloading Chest X-Ray dataset sample...")
-    path = kagglehub.dataset_download("paultimothymooney/chest-xray-pneumonia")
-    print(f"Dataset downloaded to {path}")
-
+def create_fake_images():
     os.makedirs("data/raw", exist_ok=True)
-    src_normal = os.path.join(path, "chest_xray/train/NORMAL")
-    src_pneu = os.path.join(path, "chest_xray/train/PNEUMONIA")
-
-    if os.path.exists(src_normal):
-        for f in os.listdir(src_normal)[:3]:
-            shutil.copy(os.path.join(src_normal, f), "data/raw/")
-    if os.path.exists(src_pneu):
-        for f in os.listdir(src_pneu)[:3]:
-            shutil.copy(os.path.join(src_pneu, f), "data/raw/")
-
-    print("Sample images saved to data/raw/")
+    # Создаём 3 нормальных и 3 пневмонийных фейковых изображения
+    for i in range(3):
+        # Нормальное (случайный шум)
+        img = np.random.randint(0, 255, (224, 224, 3), dtype=np.uint8)
+        Image.fromarray(img).save(f"data/raw/NORMAL_{i}.jpeg")
+        # Пневмония (тоже случайный шум, но для разнообразия)
+        img = np.random.randint(0, 255, (224, 224, 3), dtype=np.uint8)
+        Image.fromarray(img).save(f"data/raw/PNEUMONIA_{i}.jpeg")
+    print("Created 3 normal and 3 pneumonia fake images in data/raw/")
 
 
 if __name__ == "__main__":
-    download_sample()
+    create_fake_images()
