@@ -2,6 +2,7 @@
 import shutil
 import kagglehub
 
+
 def download_sample():
     print("Downloading Chest X-Ray dataset sample...")
     path = kagglehub.dataset_download("paultimothymooney/chest-xray-pneumonia")
@@ -19,6 +20,7 @@ def download_sample():
             shutil.copy(os.path.join(src_pneu, f), "data/raw/")
 
     print("Sample images saved to data/raw/")
+
 
 if __name__ == "__main__":
     download_sample()
