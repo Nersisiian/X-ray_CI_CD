@@ -24,15 +24,15 @@ def create_augmentation():
 
 
 def get_model(num_classes=2):
-    inputs = tf.keras.Input(shape=(IMG_SIZE, IMG_SIZE, 3))
+    # Используем input_shape в EfficientNet, а не отдельный Input
     base = tf.keras.applications.EfficientNetB0(
-        include_top=False, weights="imagenet", input_tensor=inputs
+        include_top=False, weights="imagenet", input_shape=(IMG_SIZE, IMG_SIZE, 3)
     )
     base.trainable = False
     x = tf.keras.layers.GlobalAveragePooling2D()(base.output)
     x = tf.keras.layers.Dropout(0.2)(x)
     outputs = tf.keras.layers.Dense(num_classes, activation="softmax")(x)
-    model = tf.keras.Model(inputs=inputs, outputs=outputs)
+    model = tf.keras.Model(inputs=base.input, outputs=outputs)
     model.compile(
         optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
