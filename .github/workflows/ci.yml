@@ -46,7 +46,7 @@ jobs:
 
       - name: Run container and test API endpoint
         run: |
-          docker run -d --name xray-test -p 8000:8000 -v $(pwd)/models:/app/models xray-cicd:latest python -m app.main
+          docker run -d --name xray-test -p 8000:8000 -v $(pwd)/models:/app/models xray-cicd:latest uvicorn app.main:app --host 0.0.0.0 --port 8000
           echo "Waiting for container to start..."
           for i in {1..30}; do
             if curl -s --fail http://localhost:8000/health > /dev/null; then
@@ -61,3 +61,4 @@ jobs:
             sleep 2
           done
           docker stop xray-test
+
